@@ -17,24 +17,24 @@ trait GrpcInteropTests {
 
   // see https://github.com/grpc/grpc/blob/master/tools/run_tests/run_interop_tests.py#L543
   val testCases = Seq(
-    "large_unary",
-    "empty_unary",
+//    "large_unary",
+//    "empty_unary",
     "ping_pong",
-    "empty_stream",
-    "client_streaming",
-    "server_streaming",
-    "cancel_after_begin",
-    "cancel_after_first_response",
-    "timeout_on_sleeping_server",
-    "custom_metadata",
-    "status_code_and_message",
-    "unimplemented_method",
-    "client_compressed_unary",
-    // hangs (https://github.com/akka/akka-grpc/issues/214)
-    // "client_compressed_streaming",
-    "server_compressed_unary",
-    "server_compressed_streaming",
-    "unimplemented_service",
+//    "empty_stream",
+//    "client_streaming",
+//    "server_streaming",
+//    "cancel_after_begin",
+//    "cancel_after_first_response",
+//    "timeout_on_sleeping_server",
+//    "custom_metadata",
+//    "status_code_and_message",
+//    "unimplemented_method",
+//    // hangs (https://github.com/akka/akka-grpc/issues/214)
+//    "client_compressed_unary",
+//    "client_compressed_streaming",
+//    "server_compressed_unary",
+//    "server_compressed_streaming",
+//    "unimplemented_service",
   )
 
   def grpcTests(serverProvider: GrpcServerProvider, clientProvider: GrpcClientProvider) = {
@@ -78,10 +78,11 @@ trait GrpcInteropTests {
 
   private def runGrpcClient(testCaseName: String, client: GrpcClient, port: Int): Unit = {
     val args: Array[String] = Array(
-      "--server_host_override=foo.test.google.fr",
-      "--use_test_ca=true",
+//      "--server_host_override=foo.test.google.fr",
+      "--use_test_ca=false",
       s"--test_case=$testCaseName",
-      s"--server_port=$port")
+      s"--server_port=$port",
+      s"--use_tls=false")
     client.run(args)
   }
 

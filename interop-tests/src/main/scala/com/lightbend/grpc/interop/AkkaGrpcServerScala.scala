@@ -5,22 +5,22 @@
 package com.lightbend.grpc.interop
 
 import java.io.FileInputStream
-import java.nio.file.{ Files, Paths }
+import java.nio.file.{Files, Paths}
 import java.security.cert.CertificateFactory
 import java.security.spec.PKCS8EncodedKeySpec
-import java.security.{ KeyFactory, KeyStore, SecureRandom }
+import java.security.{KeyFactory, KeyStore, SecureRandom}
 import java.util.Base64
-import javax.net.ssl.{ KeyManagerFactory, SSLContext }
 
+import javax.net.ssl.{KeyManagerFactory, SSLContext}
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http.ServerBinding
-import akka.http.scaladsl.model.{ HttpRequest, HttpResponse }
-import akka.http.scaladsl.{ Http2, HttpsConnectionContext }
-import akka.stream.{ ActorMaterializer, Materializer }
+import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
+import akka.http.scaladsl.{Http2, HttpConnectionContext, HttpsConnectionContext}
+import akka.stream.{ActorMaterializer, Materializer}
 import io.grpc.internal.testing.TestUtils
 
 import scala.concurrent.duration._
-import scala.concurrent.{ Await, ExecutionContext, Future }
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 case class AkkaGrpcServerScala(serverHandlerFactory: Materializer => ActorSystem => HttpRequest ⇒ Future[HttpResponse]) extends GrpcServer[(ActorSystem, ServerBinding)] {
 
@@ -31,13 +31,24 @@ case class AkkaGrpcServerScala(serverHandlerFactory: Materializer => ActorSystem
 
     val testService = serverHandlerFactory(mat)(sys)
 
+//    val bindingFuture = Http2().bindAndHandleAsync(
+//      testService,
+//      interface = "127.0.0.1",
+//      port = 0,
+//      httpsContext = serverHttpContext(),
+//    )
+//
     val bindingFuture = Http2().bindAndHandleAsync(
-      testService,
-      interface = "127.0.0.1",
-      port = 0,
-      httpsContext = serverHttpContext())
+          testService,
+          interface = "127.0.0.1",
+          port = 9000,
+//          connectionContext = serverHttpContext()
+          connectionContext = HttpConnectionContext(),
+        )
+
 
     val binding = Await.result(bindingFuture, 10.seconds)
+    println(s"bound to $binding")
     (sys, binding)
   }
 
