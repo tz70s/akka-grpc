@@ -25,17 +25,17 @@ import scala.concurrent.{ ExecutionContext, Future, Promise }
 
 class GrpcInteropSpec extends WordSpec with GrpcInteropTests with Directives {
 
-  grpcTests(IoGrpcJavaServerProvider, IoGrpcJavaClientProvider)
-  grpcTests(IoGrpcJavaServerProvider, AkkaHttpClientProviderScala)
-  grpcTests(IoGrpcJavaServerProvider, AkkaHttpClientProviderJava)
+  //  grpcTests(IoGrpcJavaServerProvider, IoGrpcJavaClientProvider)
+  //  grpcTests(IoGrpcJavaServerProvider, AkkaHttpClientProviderScala)
+  //  grpcTests(IoGrpcJavaServerProvider, AkkaHttpClientProviderJava)
 
   grpcTests(AkkaHttpServerProviderScala, IoGrpcJavaClientProvider)
-  grpcTests(AkkaHttpServerProviderScala, AkkaHttpClientProviderScala)
-  grpcTests(AkkaHttpServerProviderScala, AkkaHttpClientProviderJava)
+  //  grpcTests(AkkaHttpServerProviderScala, AkkaHttpClientProviderScala)
+  //  grpcTests(AkkaHttpServerProviderScala, AkkaHttpClientProviderJava)
 
-  grpcTests(AkkaHttpServerProviderJava, IoGrpcJavaClientProvider)
-  grpcTests(AkkaHttpServerProviderJava, AkkaHttpClientProviderScala)
-  grpcTests(AkkaHttpServerProviderJava, AkkaHttpClientProviderJava)
+  //  grpcTests(AkkaHttpServerProviderJava, IoGrpcJavaClientProvider)
+  //  grpcTests(AkkaHttpServerProviderJava, AkkaHttpClientProviderScala)
+  //  grpcTests(AkkaHttpServerProviderJava, AkkaHttpClientProviderJava)
 
   object AkkaHttpServerProviderScala extends AkkaHttpServerProvider with Directives {
     val label: String = "akka-grpc server scala"

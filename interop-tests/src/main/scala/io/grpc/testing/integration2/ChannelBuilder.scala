@@ -32,11 +32,12 @@ object ChannelBuilder {
         NettyChannelBuilder
           .forAddress(settings.serverHost, settings.serverPort)
           .flowControlWindow(65 * 1024)
-          .negotiationType(if (settings.useTls) NegotiationType.TLS else NegotiationType.PLAINTEXT)
-          .sslContext(sslContext)
+          .negotiationType(NegotiationType.PLAINTEXT_UPGRADE)
+          //          .negotiationType(if (settings.useTls) NegotiationType.TLS else NegotiationType.PLAINTEXT)
+          //          .sslContext(sslContext)
 
-      if (settings.serverHostOverride != null)
-        builder.overrideAuthority(settings.serverHostOverride)
+//      if (settings.serverHostOverride != null)
+//        builder.overrideAuthority(settings.serverHostOverride)
 
       builder.build
     }
