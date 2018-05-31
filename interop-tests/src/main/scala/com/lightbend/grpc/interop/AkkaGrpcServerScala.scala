@@ -41,7 +41,7 @@ case class AkkaGrpcServerScala(serverHandlerFactory: Materializer => ActorSystem
     val bindingFuture = Http2().bindAndHandleAsync(
           testService,
           interface = "127.0.0.1",
-          port = 9000,
+          port = 8080,
 //          connectionContext = serverHttpContext()
           connectionContext = HttpConnectionContext(),
         )

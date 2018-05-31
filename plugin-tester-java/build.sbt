@@ -20,5 +20,5 @@ val root = project.in(file("."))
   )
 
 // for loading of cert, issue #89
-val grpcVersion = "1.11.0"
+val grpcVersion = "1.12.0"
 libraryDependencies += "io.grpc" % "grpc-testing" % grpcVersion

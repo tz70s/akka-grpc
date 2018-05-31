@@ -18,6 +18,8 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
+import akka.http.scaladsl.UseHttp2
+import akka.http.scaladsl.HttpConnectionContext
 import akka.http.scaladsl.HttpsConnectionContext
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.model.HttpRequest
@@ -44,12 +46,22 @@ object GreeterServer {
     Http().bindAndHandleAsync(
       service,
       interface = "127.0.0.1",
-      port = 8080,
+      port = 8443,
       connectionContext = serverHttpContext()
     )
-    .foreach { binding =>
-      println(s"gRPC server bound to: ${binding.localAddress}")
-    }
+      .foreach { binding =>
+        println(s"HTTPS gRPC server bound to: ${binding.localAddress}")
+      }
+
+    Http().bindAndHandleAsync(
+      service,
+      interface = "127.0.0.1",
+      port = 8080,
+      connectionContext = HttpConnectionContext(UseHttp2.Always)
+    )
+      .foreach { binding =>
+        println(s"h2c gRPC server bound to: ${binding.localAddress}")
+      }
   }
 
   private def serverHttpContext(): HttpsConnectionContext = {

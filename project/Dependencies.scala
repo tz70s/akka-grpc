@@ -7,7 +7,8 @@ object Dependencies {
 
   object Versions {
     val akka = "2.5.12"
-    val akkaHttp = "10.1.1+23-d77b523d"
+    // with https://github.com/akka/akka-http/pull/2039
+    val akkaHttp = "10.1.1+51-a0d4c3ef"
 
     val scalapb = "0.7.1"
     val grpc = "1.12.0"

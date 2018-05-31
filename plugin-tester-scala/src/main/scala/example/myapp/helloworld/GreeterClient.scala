@@ -34,7 +34,7 @@ object GreeterClient {
 
     val client = new GreeterServiceClient(GrpcClientSettings(
       "127.0.0.1",
-      8080,
+      8443,
       overrideAuthority = Some("foo.test.google.fr"),
       None,
       certificate = Some("ca.pem"),
