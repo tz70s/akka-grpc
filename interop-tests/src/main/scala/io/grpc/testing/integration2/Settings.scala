@@ -34,7 +34,7 @@ object Settings {
       serverHostOverride = null,
       serverPort = 8080,
       testCase = "empty_unary",
-      useTls = true,
+      useTls = false,
       useTestCa = false,
       useAkkaHttp = false,
       defaultServiceAccount = null,

@@ -85,6 +85,7 @@ trait GrpcInteropTests {
 
   private def runGrpcClient(testCaseName: String, client: GrpcClient, port: Int): Unit = {
     val args: Array[String] = Array(
+      "--use_tls=false",
       "--server_host_override=foo.test.google.fr",
       "--use_test_ca=true",
       s"--test_case=$testCaseName",
