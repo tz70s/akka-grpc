@@ -67,6 +67,8 @@ class GrpcInteropSpec extends WordSpec with GrpcInteropTests with Directives {
       val initialHeaderToEcho = request.headers.find(_.name() == "x-grpc-test-echo-initial")
       val trailingHeaderToEcho = request.headers.find(_.name() == "x-grpc-test-echo-trailing-bin")
 
+      println(s"Headers to echo: $initialHeaderToEcho, $trailingHeaderToEcho")
+
       mapResponseHeaders(h ⇒ h ++ initialHeaderToEcho) & mapTrailingResponseHeaders(h ⇒ h ++ trailingHeaderToEcho)
     })
 
