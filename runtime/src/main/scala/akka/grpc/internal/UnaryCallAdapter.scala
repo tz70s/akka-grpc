@@ -94,6 +94,7 @@ private[akka] final class UnaryCallWithMetadataAdapter[Res] extends ClientCall.L
   }
 
   override def onClose(status: Status, trailers: Metadata): Unit = {
+    System.out.println(s"onClose received (unary), trailers: $trailers")
     if (status.isOk) {
       if (!responsePromise.isCompleted)
         // No value received so mark the future as an error

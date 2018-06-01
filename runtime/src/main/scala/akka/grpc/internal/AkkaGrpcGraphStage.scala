@@ -106,6 +106,7 @@ private final class AkkaNettyGrpcClientGraphStage[I, O](
           callback.invoke(message)
         }
         override def onClose(status: Status, trailers: Metadata): Unit = {
+          System.out.println(s"onClose received (stream), trailers: $trailers")
           trailerPromise.success(trailers)
           callback.invoke(Closed(status, trailers))
         }
