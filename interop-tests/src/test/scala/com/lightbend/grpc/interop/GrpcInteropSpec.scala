@@ -125,8 +125,11 @@ class GrpcInteropSpec extends WordSpec with GrpcInteropTests with Directives {
           case HttpEntity.Chunked(contentType, data) ⇒ {
             HttpEntity.Chunked(contentType, data.map {
               case chunk: HttpEntity.Chunk ⇒ chunk
-              case last: HttpEntity.LastChunk ⇒
-                HttpEntity.LastChunk(last.extension, f(last.trailer))
+              case last: HttpEntity.LastChunk ⇒ {
+                val mapped = f(last.trailer)
+                println(s"Observed the last chunk, mapping ${last.trailer} to ${mapped}")
+                HttpEntity.LastChunk(last.extension, mapped)
+              }
             })
           }
           case _ ⇒
