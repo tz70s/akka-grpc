@@ -207,6 +207,7 @@ class AkkaGrpcScalaClientTester(val settings: Settings)(implicit mat: Materializ
   }
 
   def customMetadata(): Unit = {
+    System.out.println("Start of test")
     // unary call
     val binaryHeaderValue = akka.util.ByteString.fromInts(0xababab)
     val unaryResponseFuture = client.unaryCall()
@@ -248,7 +249,7 @@ class AkkaGrpcScalaClientTester(val settings: Settings)(implicit mat: Materializ
       s"Trailer should contain binary header [$trailers]",
       Some(binaryHeaderValue),
       trailers.getBinary("x-grpc-test-echo-trailing-bin"))
-
+    System.out.println("End of test")
   }
 
   def statusCodeAndMessage(): Unit = {
