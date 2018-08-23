@@ -5,6 +5,8 @@ import akka.grpc.build.ReflectiveCodeGen
 scalaVersion := "2.12.6"
 
 val commonSettings = Seq(
+  version := "0.2",
+
   organization := "com.lightbend.akka.grpc",
 
   scalacOptions ++= List(
@@ -182,9 +184,15 @@ lazy val docs = Project(
     id = "akka-grpc-docs",
     base = file("docs"),
   )
+  // Make sure code generation is ran:
+  .dependsOn(pluginTesterScala)
+  .dependsOn(pluginTesterJava)
   .enablePlugins(AkkaParadoxPlugin)
   .enablePlugins(akka.grpc.NoPublish)
+  .settings(commonSettings)
   .settings(
+    // Make sure code generation is ran before paradox:
+    (Compile / paradox) := ((Compile / paradox) dependsOn (Compile / compile)).value,
     paradoxGroups := Map(
       "Language" -> Seq("Scala", "Java"),
       "Buildtool" -> Seq("sbt", "Gradle", "Maven"),
