@@ -110,7 +110,6 @@ object AkkaGrpcPlugin extends AutoPlugin {
           akkaGrpcCodeGeneratorSettings.value,
           akkaGrpcGenerators.value),
 
-
       PB.protoSources += sourceDirectory.value / "proto",
       // include proto files extracted from the dependencies with "protobuf" configuration by default
       PB.protoSources += PB.externalIncludePath.value,
@@ -138,8 +137,15 @@ object AkkaGrpcPlugin extends AutoPlugin {
     val baseSettings = settings.filterNot(GeneratorOption.settings.contains)
     generators.map { generator =>
       protocbridge.Target(generator, targetPath, generator match {
-        case PB.gens.java => baseSettings.filterNot(_ == "flat_package")
-        case _ => baseSettings
+        case PB.gens.java =>
+          // Java protoc does not allow including other options except the supported ones. flat_package is ScalaPB-specific
+          baseSettings.filterNot(_ == "flat_package")
+        case protocbridge.JvmGenerator("scala", ScalaPbCodeGenerator) =>
+          // ScalaPB does not allow including other options except the supported ones.
+          baseSettings
+        case _ =>
+          // Our own generators allow unknown options to be passed in
+          settings
       })
     }
   }
@@ -168,7 +174,7 @@ object AkkaGrpcPlugin extends AutoPlugin {
     } yield (stub, language) match {
       case (Client, Scala) => Seq(ScalaClientCodeGenerator)
       case (Server, Scala) => (if (serverPowerApis) Seq(ScalaPowerApiTraitCodeGenerator) else Seq.empty) ++
-          Seq(ScalaServerCodeGenerator(serverPowerApis))
+          Seq(ScalaServerCodeGenerator)
       case (Client, Java) => Seq(JavaClientCodeGenerator)
       case (Server, Java) => (if (serverPowerApis) Seq(JavaPowerApiInterfaceCodeGenerator) else Seq.empty) ++
         Seq(JavaServerCodeGenerator(serverPowerApis))

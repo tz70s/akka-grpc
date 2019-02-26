@@ -5,8 +5,7 @@
 package akka.grpc.gen.scaladsl
 
 import scala.collection.JavaConverters._
-import scala.collection.immutable
-import akka.grpc.gen.{ BuildInfo, CodeGenerator, Logger }
+import akka.grpc.gen.{ BuildInfo, CodeGenerator, Logger, Options }
 import com.google.protobuf.Descriptors._
 import com.google.protobuf.compiler.PluginProtos.{ CodeGeneratorRequest, CodeGeneratorResponse }
 import scalapb.compiler.GeneratorParams
@@ -34,12 +33,14 @@ abstract class ScalaCodeGenerator extends CodeGenerator {
           acc + (fp.getName -> FileDescriptor.buildFrom(fp, deps))
       }
 
+    val serverPowerApis = new Options(request.getParameter).serverPowerApis
+
     val services =
-      (for {
+      for {
         file ← request.getFileToGenerateList.asScala
         fileDesc = fileDescByName(file)
         serviceDesc ← fileDesc.getServices.asScala
-      } yield Service(parseParameters(request.getParameter), fileDesc, serviceDesc)).toSeq
+      } yield Service(parseParameters(request.getParameter), fileDesc, serviceDesc, serverPowerApis)
 
     for {
       service <- services

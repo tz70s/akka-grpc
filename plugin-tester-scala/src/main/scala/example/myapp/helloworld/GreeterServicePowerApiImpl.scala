@@ -3,13 +3,13 @@
  */
 
 //#full-service-impl
-package example.myapp.helloworld
+package example.myapp.powerhelloworld
 
 import akka.NotUsed
 import akka.grpc.scaladsl.Metadata
 import akka.stream.Materializer
 import akka.stream.scaladsl.{ Sink, Source }
-import example.myapp.helloworld.grpc._
+import example.myapp.powerhelloworld.grpc._
 
 import scala.concurrent.Future
 

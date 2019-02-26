@@ -9,7 +9,10 @@ import com.google.protobuf.Descriptors.{ FileDescriptor, ServiceDescriptor }
 import scala.collection.JavaConverters._
 import scala.collection.immutable
 
-final case class Service(packageName: String, name: String, grpcName: String, methods: immutable.Seq[Method]) {
+/**
+ * @param powerApi whether to generate 'power API'
+ */
+final case class Service(packageName: String, name: String, grpcName: String, methods: immutable.Seq[Method], powerApi: Boolean = false) {
   def serializers: Set[Serializer] = (methods.map(_.deserializer) ++ methods.map(_.serializer)).toSet
   def packageDir = packageName.replace('.', '/')
 }

@@ -41,7 +41,7 @@ class GreeterServer(system: ActorSystem) {
     //      GreeterServiceHandler(new GreeterServiceImpl(mat))
     val services: Seq[HttpRequest => Future[HttpResponse]] = Seq(
       GreeterServiceHandler(new GreeterServiceImpl(mat)),
-      GreeterServicePowerApiHandler(new GreeterServicePowerApiImpl(mat)))
+      example.myapp.powerhelloworld.grpc.GreeterServiceHandler(new example.myapp.powerhelloworld.GreeterServicePowerApiImpl(mat)))
 
     // Bind service handler servers to localhost:8080/8081
     val bindings = Future.sequence {

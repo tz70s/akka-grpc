@@ -75,8 +75,6 @@ object GenerateMojo {
     }
   }
 
-  val akkaGrpcCodeGeneratorSettings = Seq("flat_package")
-
 }
 
 class GenerateMojo @Inject() (project: MavenProject, buildContext: BuildContext) extends AbstractMojo {
@@ -117,6 +115,10 @@ class GenerateMojo @Inject() (project: MavenProject, buildContext: BuildContext)
     if (!directoryFound) sys.error(s"None of protobuf sources directories $protoPaths do not exist")
   }
 
+  private def akkaGrpcCodeGeneratorSettings = {
+    Seq("flat_package") ++ (if (serverPowerApis) Some("server_power_apis") else None)
+  }
+
   private def generate(language: Language, generatedSourcesDir: File, protoDir: File): Unit = {
     val scanner = buildContext.newScanner(protoDir, true)
     scanner.setIncludes(Array("**/*.proto"))
@@ -143,8 +145,8 @@ class GenerateMojo @Inject() (project: MavenProject, buildContext: BuildContext)
             glueGenerators.map(g => adaptAkkaGenerator(generatedSourcesDir, g, akkaGrpcCodeGeneratorSettings))
         case Scala ⇒
           val glueGenerators = Seq(
-            if (generateServer) Seq(ScalaTraitCodeGenerator, ScalaServerCodeGenerator(serverPowerApis)) else Seq.empty,
-            if (generatePlayServer) Seq(ScalaTraitCodeGenerator, ScalaServerCodeGenerator(serverPowerApis), PlayScalaServerCodeGenerator(serverPowerApis)) else Seq.empty,
+            if (generateServer) Seq(ScalaTraitCodeGenerator, ScalaServerCodeGenerator) else Seq.empty,
+            if (generatePlayServer) Seq(ScalaTraitCodeGenerator, ScalaServerCodeGenerator, PlayScalaServerCodeGenerator(serverPowerApis)) else Seq.empty,
             if (serverPowerApis) Seq(ScalaPowerApiTraitCodeGenerator) else Seq.empty,
             if (generateClient) Seq(ScalaTraitCodeGenerator, ScalaClientCodeGenerator) else Seq.empty,
             if (generatePlayClient) Seq(ScalaTraitCodeGenerator, PlayScalaClientCodeGenerator) else Seq.empty

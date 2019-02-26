@@ -28,24 +28,9 @@ object Main extends App {
     baos.toByteArray
   }
 
-  val req = CodeGeneratorRequest.parseFrom(inBytes)
-  private val reqLowerCase = req.getParameter.toLowerCase
-
-  private val languageScala: Boolean = reqLowerCase.contains("language=scala")
-
-  private val generateClient: Boolean = !reqLowerCase.contains("generate_client=false")
-
-  private val generateServer: Boolean = !reqLowerCase.contains("generate_server=false")
-
-  private val generatePlay: Boolean = reqLowerCase.contains("generate_play=true")
-
-  private val serverPowerApis: Boolean = reqLowerCase.contains("server_power_apis=true")
-
-  val LogFileRegex = """(?:.*,)logfile=([^,]+)(?:,.*)?""".r
-  private val logger = req.getParameter match {
-    case LogFileRegex(path) => new FileLogger(path)
-    case _ => SilencedLogger
-  }
+  private val codeGeneratorRequest = CodeGeneratorRequest.parseFrom(inBytes)
+  val options = new Options(codeGeneratorRequest.getParameter)
+  import options._
 
   val out = {
     val codeGenerators =
@@ -53,9 +38,9 @@ object Main extends App {
         if (languageScala) {
           // Scala
           val base =
-            if (generateClient && generateServer) Seq(ScalaTraitCodeGenerator, ScalaClientCodeGenerator, ScalaServerCodeGenerator(serverPowerApis))
+            if (generateClient && generateServer) Seq(ScalaTraitCodeGenerator, ScalaClientCodeGenerator, ScalaServerCodeGenerator)
             else if (generateClient) Seq(ScalaTraitCodeGenerator, ScalaClientCodeGenerator)
-            else if (generateServer) Seq(ScalaTraitCodeGenerator, ScalaServerCodeGenerator(serverPowerApis))
+            else if (generateServer) Seq(ScalaTraitCodeGenerator, ScalaServerCodeGenerator)
             else throw new IllegalArgumentException("At least one of generateClient or generateServer must be enabled")
           if (serverPowerApis) Seq(ScalaPowerApiTraitCodeGenerator) ++ base
           else base
@@ -92,7 +77,7 @@ object Main extends App {
       }
 
     codeGenerators.foreach { g =>
-      val gout = g.run(req, logger)
+      val gout = g.run(codeGeneratorRequest, logfile.map(new FileLogger(_)).getOrElse(SilencedLogger))
       System.out.write(gout.toByteArray)
       System.out.flush()
     }
