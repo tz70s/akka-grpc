@@ -7,7 +7,6 @@
 @akka.grpc.gen.Constants.DoNotEditComment
 package @service.packageName;
 
-import akka.annotation.*;
 import akka.grpc.internal.*;
 import akka.grpc.GrpcClientSettings;
 import akka.grpc.javadsl.AkkaGrpcClient;
@@ -23,7 +22,22 @@ import io.grpc.MethodDescriptor;
 import static @{service.packageName}.@{service.name}.Serializers.*;
 
 import scala.concurrent.ExecutionContext;
-import scala.compat.java8.FutureConverters;
+
+@{
+  def withSingleResponse(stmt: String) = Set("import akka.grpc.javadsl.SingleResponseRequestBuilder;", stmt)
+  def withStreamResponse(stmt: String) = Set("import akka.grpc.javadsl.StreamResponseRequestBuilder;", stmt)
+  service.methods.toSet.flatMap { method: akka.grpc.gen.javadsl.Method =>
+
+    val statements = method.methodType match {
+      case akka.grpc.gen.Unary => withSingleResponse("import akka.grpc.internal.ScalaUnaryRequestBuilder")
+      case akka.grpc.gen.ClientStreaming =>  withSingleResponse("import akka.grpc.internal.ScalaClientStreamingRequestBuilder")
+      case akka.grpc.gen.ServerStreaming => withStreamResponse("import akka.grpc.internal.ScalaServerStreamingRequestBuilder")
+      case akka.grpc.gen.BidiStreaming => withStreamResponse("import akka.grpc.internal.ScalaBidirectionalStreamingRequestBuilder")
+    }
+
+    statements
+  }.mkString("\n")
+}
 
 public abstract class @{service.name}Client extends @{service.name}ClientPowerApi implements @{service.name}, AkkaGrpcClient {
   public static final @{service.name}Client create(GrpcClientSettings settings, Materializer mat, ExecutionContext ec) {
